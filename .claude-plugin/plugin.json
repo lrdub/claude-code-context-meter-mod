@@ -1,0 +1,1 @@
+{ "name": "context-meter", "version": "0.1.0", "description": "Status line showing context usage against a 150k-token budget (can exceed 100%)" }
