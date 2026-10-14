@@ -1,1 +1,1 @@
-{ "name": "context-meter", "version": "0.1.0", "description": "Status line showing context usage against a 150k-token budget (can exceed 100%)" }
+{ "name": "context-meter", "version": "0.2.0", "description": "Status line with a bar showing context usage against a 150k-token budget (can exceed 100%)" }

@@ -1,17 +1,26 @@
 import { describe, expect, test } from 'claude-code/testing'
-import { formatContext } from './register'
+import { formatBar, formatContext } from './register'
+
+describe('formatBar', () => {
+  test('fills in proportion and clamps at both ends', () => {
+    expect(formatBar(0)).toBe('░░░░░░░░░░')
+    expect(formatBar(0.5)).toBe('█████░░░░░')
+    expect(formatBar(1)).toBe('██████████')
+    expect(formatBar(1.6)).toBe('██████████')
+  })
+})
 
 describe('formatContext', () => {
   test('before the first response reports usage', () => {
-    expect(formatContext(undefined)).toBe('ctx: 0% (0/150000 tokens)')
+    expect(formatContext(undefined)).toBe('ctx: ░░░░░░░░░░ 0% (0/150000 tokens)')
   })
 
   test('after a turn reports usage', () => {
-    expect(formatContext(24000)).toBe('ctx: 16% (24000/150000 tokens)')
+    expect(formatContext(24000)).toBe('ctx: ██░░░░░░░░ 16% (24000/150000 tokens)')
   })
 
   test('goes above 100% past the budget', () => {
-    expect(formatContext(180000)).toBe('ctx: 120% (180000/150000 tokens)')
+    expect(formatContext(180000)).toBe('ctx: ██████████ 120% (180000/150000 tokens)')
   })
 })
 
@@ -25,6 +34,6 @@ describe('session.measure', () => {
     await $.session.measure({ context: { tokens: 75000, window: 200000, percent: 38 }, rateLimits: [], changed: ['context'] })
     await $.session.measure({ context: { tokens: 75000, window: 200000, percent: 38 }, rateLimits: [], changed: ['cost'] })
 
-    expect(lines).toEqual(['ctx: 0% (0/150000 tokens)', 'ctx: 50% (75000/150000 tokens)'])
+    expect(lines).toEqual(['ctx: ░░░░░░░░░░ 0% (0/150000 tokens)', 'ctx: █████░░░░░ 50% (75000/150000 tokens)'])
   })
 })

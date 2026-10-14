@@ -1,6 +1,6 @@
 # context-meter
 
-Claude Code mod: a status line showing context usage against a 150k-token budget (can exceed 100%).
+Claude Code mod: a status line with a horizontal bar showing context usage against a 150k-token budget (can exceed 100%).
 
 ## Install
 
