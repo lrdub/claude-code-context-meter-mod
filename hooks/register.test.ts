@@ -37,3 +37,28 @@ describe('session.measure', () => {
     expect(lines).toEqual(['ctx: ░░░░░░░░░░ 0% (0/150000 tokens)', 'ctx: █████░░░░░ 50% (75000/150000 tokens)'])
   })
 })
+
+const BAND = {
+  component: 'AbovePrompt',
+  props: { hasSurvey: false, isWorking: false, maxRows: 10, bodyColumns: 80, scroll: { offset: 0, bodyRows: 10 }, view: {} },
+} as const
+
+describe('AbovePrompt band', () => {
+  test('shows the meter on desktop and follows context', async ($, on) => {
+    on('ui.status', () => ({ value: undefined }))
+    on('session.measure', (_, e) => ({ changed: e.changed }))
+    const ui = await $.ui.mount({ plugin: 'context-meter', surface: 'desktop', ...BAND })
+    expect((await ui.find({ type: 'Text', text: /ctx/ }))?.text).toBe('ctx: ░░░░░░░░░░ 0% (0/150000 tokens)')
+
+    await $.session.measure({ context: { tokens: 75000, window: 200000, percent: 38 }, rateLimits: [], changed: ['context'] })
+    expect((await ui.find({ type: 'Text', text: /ctx/ }))?.text).toBe('ctx: █████░░░░░ 50% (75000/150000 tokens)')
+    await ui.unmount()
+  })
+
+  test('stays out of the terminal, which has the status line', async ($, on) => {
+    on('ui.render', () => ({ type: 'Box', children: [] }))
+    const ui = await $.ui.mount({ plugin: 'context-meter', surface: 'terminal', ...BAND })
+    expect(await ui.find({ type: 'Text', text: /ctx/ })).toBeUndefined()
+    await ui.unmount()
+  })
+})
